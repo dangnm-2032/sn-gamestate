@@ -1,5 +1,6 @@
 import cv2
 import pandas as pd
+import numpy as np
 
 from distinctipy import get_rgb256
 
@@ -55,9 +56,26 @@ class CompletePlayerEllipse(TeamVisualizer, EllipseDetection):
         self.display_list = [item for item in self.display_list if item]
         super().__init__()
 
+    def draw_triangle(self, frame, bbox, color):
+        y = int(bbox[1])
+        x = int((bbox[0] + bbox[2]) / 2)
+
+        triangle_points = np.array([
+            [x,y],
+            [x-10,y-20],
+            [x+10,y-20],
+        ])
+        cv2.drawContours(frame, [triangle_points], 0, color, cv2.FILLED)
+        cv2.drawContours(frame, [triangle_points], 0, (0, 0, 0), 2)
+
+        return frame
+
     def draw_detection(self, image, detection_pred, detection_gt, metric=None):
         for detection, is_pred in zip([detection_pred, detection_gt], [True, False]):
-            if detection is not None:
+            if detection is not None and detection.category_id == 1:
+                if hasattr(detection, "ball_control") and detection.ball_control:
+                    image = self.draw_triangle(image, detection.bbox.ltrb(), (255, 0, 0))
+                
                 color = self.color(detection, is_prediction=is_pred)
                 if color:
                     x1, y1, x2, y2 = detection.bbox.ltrb()
@@ -89,6 +107,9 @@ class CompletePlayerEllipse(TeamVisualizer, EllipseDetection):
                         color_txt=None,
                         alpha_bg=0.6,
                     )
+
+            elif detection is not None and detection.category_id == 0:
+                self.draw_triangle(image, detection.bbox.ltrb(), (0, 255, 0))
 
 def pprint(key, value):
     if key == "track_id" and not pd.isna(value):

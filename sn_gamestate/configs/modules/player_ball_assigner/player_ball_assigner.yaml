@@ -1,0 +1,4 @@
+_target_: sn_gamestate.player_ball_assigner.player_ball_assigner.PlayerBallAssigner
+batch_size: 8
+cfg:
+  max_player_ball_distance: 70
