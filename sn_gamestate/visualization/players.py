@@ -1,6 +1,7 @@
 import cv2
 import pandas as pd
 import numpy as np
+import sys
 
 from distinctipy import get_rgb256
 
@@ -73,6 +74,7 @@ class CompletePlayerEllipse(TeamVisualizer, EllipseDetection):
     def draw_detection(self, image, detection_pred, detection_gt, metric=None):
         for detection, is_pred in zip([detection_pred, detection_gt], [True, False]):
             if detection is not None and detection.category_id == 1:
+                
                 if hasattr(detection, "ball_control") and detection.ball_control:
                     image = self.draw_triangle(image, detection.bbox.ltrb(), (255, 0, 0))
                 
@@ -110,6 +112,18 @@ class CompletePlayerEllipse(TeamVisualizer, EllipseDetection):
 
             elif detection is not None and detection.category_id == 0:
                 self.draw_triangle(image, detection.bbox.ltrb(), (0, 255, 0))
+
+        overlay = image.copy()
+        cv2.rectangle(overlay, (1350, 850), (1900,970), (255,255,255), -1 )
+        alpha = 0.4
+        cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, image)
+
+        pos_left = detection_pred["possession_left"] / (detection_pred["frame_count"] + sys.float_info.epsilon)
+        pos_right = detection_pred["possession_right"] / (detection_pred["frame_count"] + sys.float_info.epsilon)
+        
+        cv2.putText(image, f"Team 1 Ball Control: {pos_left*100:.2f}%",(1400,900), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,0), 3)
+        cv2.putText(image, f"Team 2 Ball Control: {pos_right*100:.2f}%",(1400,950), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,0), 3)
+
 
 def pprint(key, value):
     if key == "track_id" and not pd.isna(value):
