@@ -5,7 +5,7 @@ dataset:
   nvid: 1
   vids_dict:
     valid:
-    - dbdc7605-37d4-4318-a1aa-24627e968602
+    - e2127b0e-0107-481c-a453-6f3a291c6d81
 defaults:
 - dataset: soccernet_gs
 - eval: gs_hota
@@ -23,6 +23,7 @@ defaults:
 - modules/calibration: nbjw_calib
 - modules/player_ball_assigner: player_ball_assigner
 - modules/team_ball_control: team_ball_control
+- modules/speed_estimator: speed_estimator
 - _self_
 eval_tracking: false
 experiment_name: sn-gamestate
@@ -35,7 +36,7 @@ hydra:
     dir: outputs/${job_jd}
   sweep:
     dir: multirun_outputs/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}
-job_jd: dbdc7605-37d4-4318-a1aa-24627e968602
+job_jd: e2127b0e-0107-481c-a453-6f3a291c6d81
 model_dir: ${project_dir}/pretrained_models
 modules:
   bbox_detector:
@@ -46,7 +47,7 @@ modules:
     batch_size: 8
   pitch:
     batch_size: 1
-  pose_bottomup:  
+  pose_bottomup:
     batch_size: 8
   reid:
     batch_size: 64
@@ -65,6 +66,7 @@ pipeline:
 - team
 - team_side
 - team_ball_control
+- speed_estimator
 print_config: false
 project_dir: ${hydra:runtime.cwd}
 state:
@@ -75,4 +77,4 @@ use_rich: true
 use_wandb: false
 visualization:
   cfg:
-    save_videos: true
+    save_videos: false

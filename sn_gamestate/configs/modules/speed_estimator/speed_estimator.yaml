@@ -1,0 +1,6 @@
+_target_: sn_gamestate.speed_estimator.speed_estimator.SpeedEstimator
+
+cfg:
+  fps: 25
+  width_scale: 1.0
+  height_scale: 1.0

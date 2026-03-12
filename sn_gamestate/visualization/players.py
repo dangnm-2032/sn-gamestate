@@ -47,12 +47,13 @@ class PlayerEllipse(TeamVisualizer, EllipseDetection):
     pass
 
 class CompletePlayerEllipse(TeamVisualizer, EllipseDetection):
-    def __init__(self, display_track_id=True, display_jersey=True, display_role=True, display_team=False):
+    def __init__(self, display_track_id=True, display_jersey=True, display_role=True, display_team=False, display_speed=True):
         self.display_list = [
             "track_id" if display_track_id else None,
             "jersey_number" if display_jersey else None,
             "role" if display_role else None,
             "team" if display_team else None,
+            "speed" if display_speed else None,
         ]
         self.display_list = [item for item in self.display_list if item]
         super().__init__()
@@ -143,5 +144,8 @@ def pprint(key, value):
             "left": "T: L",
             "right": "T: R"
         }.get(value, "")
+
+    elif key == "speed":
+        return f"SP: {int(value)}" if value is not None else ""
     else:
         return ""
